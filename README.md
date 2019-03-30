@@ -1,7 +1,6 @@
 # Etherflow
 
-![Alt text](assets/static/images/screenshot.png?raw=true "Title")
-
+![Alt text](assets/static/images/screenshot.png?raw=true "Etherflow")
 
 ## Background
 
@@ -29,7 +28,22 @@ This is the example query:
 
 Etherflow is a proof of concept for said approach. It's a web application made with Elixir, Phoenix, and Neo4J as a database. When it first started, it will start scanning Ethereum block from the beginning and record into Neo4j. When you stop and start it again, it will pick up the last block from db and continue until the last block (which might take around 2 weeks to catch up, optimisation required).
 
-You can experiment with your neo4j browser to have more flexible query. 
+You can experiment with your neo4j browser to have more flexible query and analyse the transaction relationship in detail.
+
+![Alt text](assets/static/images/neo4j.png?raw=true "Etherflow")
+
+
+The endgoal of Etherflow to provide simple web service API and interface where you can inquiry an ethereum address to get information whether its a clean address or contaminated with bad money.
+
+Currently you can query by calling the API and giving 2 address to see the relationship (if any) such as :
+
+```
+http://localhost:4000/api/match?from=0x4f4a9be10cd5d3fb5de48c17be296f895690645b&to=0x32be343b94f860124dc4fee278fdcbd38c102d88
+
+```
+
+You can also use the GUI (see the first image above)
+
 
 
 To install in your machine:
