@@ -1,0 +1,103 @@
+
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+        <title>Etherflow</title>
+        <link rel="stylesheet" href="https://eisman.github.io/neo4jd3/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://eisman.github.io/neo4jd3/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://eisman.github.io/neo4jd3/css/neo4jd3.min.css?v=0.0.1">
+        <style>
+            body,
+            html,
+            .neo4jd3 {
+                min-height: 500px;
+                height: 100%;
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+          <h1>Etherflow</h1>
+          <p>This is a proof of concept to know whether there are relationship between 2 ETH address.</p>
+          <label>Test address</label><input type="text" id="address" />
+          <label>Bad address</label><input type="text" id="bad-address" />  
+          <button class="btn btn-primary" onclick="check()">Check</button> 
+          <p class="text-danger" id="error"></p>      
+        </div>
+        <div id="neo4jd3"></div>
+
+        <!-- Scripts -->
+        <script src="https://eisman.github.io/neo4jd3/js/d3.min.js"></script>
+        <script src="https://eisman.github.io/neo4jd3/js/neo4jd3.js?v=0.0.1"></script>
+        <script type="text/javascript">
+
+            function check() {
+              var addr = document.getElementById("address").value;
+              var baddr = document.getElementById("bad-address").value; 
+              if (validateInputAddresses(addr) != true) {document.getElementById("error").innerHTML = "Test Address seems like invalid ETH address"; }
+              else {
+              if (validateInputAddresses(baddr) != true) {document.getElementById("error").innerHTML = "Bad Address seems like invalid ETH address"; } else {
+                document.getElementById("error").innerHTML = "";
+                console.log("sukses");
+                init(addr, baddr);
+
+              }
+              }                
+                      
+            }
+
+            function validateInputAddresses(address) {
+              console.log(address)
+              return (/^(0x){1}[0-9a-fA-F]{40}$/i.test(address));
+            }
+
+            function init(from, to) {
+                var neo4jd3 = new Neo4jd3('#neo4jd3', {
+                    highlight: [
+                        {
+                            class: 'Bad Address',
+                            property: 'name',
+                            value: 'Poloniex'
+                        }
+                    ],
+                    icons: {
+                       'Address': 'home',
+                       'Transit': 'chain',
+                       'Bad Address': 'close'
+                    },
+                    images: {
+                    },
+                    minCollision: 60,
+                    neo4jDataUrl: '/api/match?from=' + from + '&to=' + to,
+                    // neo4jDataUrl: 'https://eisman.github.io/neo4jd3/json/neo4jData.json',                    
+                    nodeRadius: 30,
+                    onNodeDoubleClick: function(node) {
+                        switch(node.id) {
+                            case '25':
+                                // Google
+                                window.open(node.properties.address, '_blank');
+                                break;
+                            default:
+                                var maxNodes = 5,
+                                data = neo4jd3.randomD3Data(node, maxNodes);
+                                neo4jd3.updateWithD3Data(data);
+                                break;
+                        }
+                    },
+                    onRelationshipDoubleClick: function(relationship) {
+                        console.log('double click on relationship: ' + JSON.stringify(relationship));
+                    },
+                    zoomFit: false
+                });
+
+            }
+
+            window.onload = init('0x4f4a9be10cd5d3fb5de48c17be296f895690645b', '0x32be343b94f860124dc4fee278fdcbd38c102d88');
+        </script>
+    </body>
+</html>
