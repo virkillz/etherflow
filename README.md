@@ -4,25 +4,28 @@
 
 ## Background
 
-The origin of the problem is one curiosity: If transaction in blockchain are transparent, it supposed to be easy to track stolen fund, right? Imagine if case of major crypto theft case, the address of the hacker is made public, all cryptoexchange aware and freeze it the momment they receive such fund, then it will be harder for him to move the fund and cash out. We got safer crypto ecosystem and move one step away from its wild-wald west nature.
+The origin of the problem is one curiosity: If transaction in blockchain are transparent, it supposed to be easy to track stolen fund, right? Imagine in case of major crypto theft case/breach, the address of the hacker is made public, all cryptoexchange aware and freeze it the momment they receive such fund, then it will be harder for him to move the fund and cash out. We got safer crypto ecosystem and move one step away from its wild-wild-west nature.
 
-Aside from the fact that such behavior might not exactly what Satoshi has envision or how many cryptoexchange might not care about that, we try to find hout how to achieve it technically.
+Aside from the fact that such behavior might not exactly what Satoshi has envision or how many cryptoexchange might not care about that, we try to find out how to achieve it technically.
 
-Naive approach will be to record the hacker's address. In reality, its very trivial for a hacker to bounce the fund into multiple address, and if we try to track each movement and add new address into the "watch list" then it become larger and larger. Plus, he can just send some fund to major cryptoexchange's hot storage and then all address belong to its user suddenly will be on watch list too. 
+Naive approach will be to record the hacker's address and freeze incoming transaction comes from it. But in reality, its very trivial for a hacker to bounce the fund into multiple address, and if we try to track each movement and each time add new address into the "watch list" then very soon the watch list will grew exponentially. Its getting worse when he can just send some fund to major cryptoexchange's hot storage and then suddenly all address belong to its user, will be on the watch list too. 
 
 Clearly its getting more and more impractical.
 
-Here we try another approach by dump all transaction into a graph db. We scan all block and record each transaction. Each address become a node, and each transaction data become relationship data between the node.
+Here we try another approach by dump all transaction in blockchain into a graph db. Unlike what most blockexplorer did by dumping it into some sort of SQL database. We can scan all block and record each transaction. Each address represent a node in a graph, and each transaction data become relationship data between the node. All remaining information is just metadata.
 
-We can tag some know address, whether it's belong to CryptoExchange or a known "bad address". Lastly, if we cutious whether an address in 'contaminated' by bad fund, we can query into the graph db.
+Then we can tag some known address, whether it's belong to famous CryptoExchange (Coinbase, Poloniex, Binance, Indodax, etc) or a known "bad address" (all major known breach). Lastly, if we curious whether an address in 'contaminated' by bad fund, we can query into the graph db.
 
 
-This is the example query:
+This is the example query, which return shortest path between two nodes, and also display intermediary node. 
 ```
     MATCH (n {tag: 'BAD ADDRESS'}),(m {address: '0x-your-target-eth-address'}),
     p = shortestPath((n)-[x:TransferETHTo*..15]-(m)) 
     RETURN p
 ```
+
+Knowing how cypher query language works, I'll let your imagination go wild on what kind of data you can get.
+
 
 ## Etherflow
 
